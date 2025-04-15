@@ -77,6 +77,7 @@ export default function Add() {
 
       <VStack spacing={4} align="stretch">
         <Box>
+        <Text>Adresi isimlendirin:</Text>
           <Input
             placeholder="Örn: Ev, İş, Park"
             value={locationName}
@@ -85,6 +86,8 @@ export default function Add() {
         </Box>
 
         <Box>
+
+        <Text>Renk Seçin:</Text>
           <Input
             type="color"
             value={markerColor}
