@@ -1,8 +1,11 @@
 // pages/index.js
 "use client";
 import { Box, Button, Heading } from "@chakra-ui/react";
+import dynamic from 'next/dynamic';
 import Link from "next/link";
-import MultiMapComponent from "@/components/MultiMapComponent";
+const MultiMapComponent = dynamic(() => import('@/components/MultiMapComponent'), { ssr: false });
+
+
 export default function Home() {
   return (
     <>
