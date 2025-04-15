@@ -1,7 +1,7 @@
 'use client'
 import dynamic from "next/dynamic";
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';  // Redux hook'larını import ettik
+import { useDispatch, useSelector } from 'react-redux'; 
 import {
   Box,
   Heading,
@@ -10,7 +10,7 @@ import {
   VStack,
   Text,
 } from '@chakra-ui/react';
-import { addLocation, setLocations } from '../../store/locationsSlice';  // Redux aksiyonlarını import ettik
+import { addLocation, setLocations } from '../../store/locationsSlice'; 
 
 const MapComponent = dynamic(() => import("../../components/MapComponent"), { ssr: false });
 
@@ -22,9 +22,8 @@ export default function Add() {
   const [markerColor, setMarkerColor] = useState('#ff0000');
 
   useEffect(() => {
-    // Sayfa ilk yüklendiğinde localStorage'dan veriyi alıp Redux store'a set etme
     const savedLocations = JSON.parse(localStorage.getItem('locations')) || [];
-    dispatch(setLocations(savedLocations));  // Redux store'a kaydet
+    dispatch(setLocations(savedLocations)); 
   }, [dispatch]);
 
   const handleSave = () => {
@@ -39,10 +38,8 @@ export default function Add() {
       color: markerColor,
     };
 
-    // Yeni konumu Redux store'a ekle
     dispatch(addLocation(newLocation));
 
-    // Redux store'dan güncellenmiş locations'ı localStorage'a kaydet
     const updatedLocations = [...locations, newLocation];
     localStorage.setItem('locations', JSON.stringify(updatedLocations));
 

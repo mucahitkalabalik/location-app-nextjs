@@ -1,8 +1,9 @@
 'use client';
-import { Provider as UiProvider } from "@/components/ui/provider";  // İsminde değişiklik yapıldı
+import { Provider as UiProvider } from "@/components/ui/provider"; 
 import { Provider } from 'react-redux';
 import "leaflet/dist/leaflet.css";
 import {store} from "@/store";
+import Navbar from "@/components/NavBar";
 
 export default function RootLayout(props = ({ children } = {})) {
   const { children } = props;
@@ -10,8 +11,9 @@ export default function RootLayout(props = ({ children } = {})) {
   return (
     <html suppressHydrationWarning>
       <body>
-        <Provider store={store}>  {/* Redux Provider */}
-          <UiProvider>  {/* UI Provider */}
+        <Provider store={store}> 
+          <UiProvider>
+            <Navbar />
             {children}
           </UiProvider>
         </Provider>
