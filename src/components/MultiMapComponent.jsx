@@ -27,7 +27,6 @@ export default function MultiMarkerMap() {
   const mapRef = useRef(null);  
 
   useEffect(() => {
-
     const savedLocations = JSON.parse(localStorage.getItem('locations')) || [];
     setLocations(savedLocations);
   }, []);
@@ -68,42 +67,48 @@ export default function MultiMarkerMap() {
   const center = locations.length > 0 ? locations[0].position : defaultCenter;
 
   return (
-    <MapContainer
-      center={center}
-      zoom={6}
-      style={{ height: '60vh', width: '100%' }}
-      whenReady={(e) => { 
-        mapRef.current = e.target; 
-      }}
-    >
-      <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {locations.map((loc, index) => (
-        <Marker
-          key={index}
-          position={[loc.position.lat, loc.position.lng]}
-          icon={createMarkerIcon(loc.color)}
-          eventHandlers={{
-            click: () => handleMarkerClick(loc),
+    <div>
+      {locations.length === 0 ? (
+        <p>Henüz konum eklenmemiştir.</p> // Konum eklenmemişse mesaj göster
+      ) : (
+        <MapContainer
+          center={center}
+          zoom={6}
+          style={{ height: '60vh', width: '100%' }}
+          whenReady={(e) => { 
+            mapRef.current = e.target; 
           }}
         >
-          <Popup>
-            {loc.name} <br />
-            Lat: {loc.position.lat}, Lng: {loc.position.lng}
-          </Popup>
-        </Marker>
-      ))}
+          <TileLayer
+            attribution='&copy; OpenStreetMap contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {locations.map((loc, index) => (
+            <Marker
+              key={index}
+              position={[loc.position.lat, loc.position.lng]}
+              icon={createMarkerIcon(loc.color)}
+              eventHandlers={{
+                click: () => handleMarkerClick(loc),
+              }}
+            >
+              <Popup>
+                {loc.name} <br />
+                Lat: {loc.position.lat}, Lng: {loc.position.lng}
+              </Popup>
+            </Marker>
+          ))}
 
-      {userLocation && (
-        <Marker
-          position={[userLocation.lat, userLocation.lng]}
-          icon={createMarkerIcon("blue")} 
-        >
-          <Popup>Your Location</Popup>
-        </Marker>
+          {userLocation && (
+            <Marker
+              position={[userLocation.lat, userLocation.lng]}
+              icon={createMarkerIcon("blue")} 
+            >
+              <Popup>Your Location</Popup>
+            </Marker>
+          )}
+        </MapContainer>
       )}
-    </MapContainer>
+    </div>
   );
 }
