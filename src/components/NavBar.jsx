@@ -7,7 +7,11 @@ export default function Navbar() {
     <Box bg="teal.500" p={4}>
       <Flex align="center" justify="space-between">
         <Heading color="white" size="lg">
-          Locaiton App
+        <Link as={NextLink} href="/" passHref>
+            <Button colorScheme="teal" variant="ghost" mr={4}>
+              Location App
+            </Button>
+          </Link>
         </Heading>
         <Flex>
           <Link as={NextLink} href="/" passHref>
