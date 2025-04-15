@@ -14,11 +14,6 @@ export default function Navbar() {
           </Link>
         </Heading>
         <Flex>
-          <Link as={NextLink} href="/" passHref>
-            <Button colorScheme="teal" variant="ghost" mr={4}>
-              Anasayfa
-            </Button>
-          </Link>
           <Link as={NextLink} href="/add" passHref>
             <Button colorScheme="teal" variant="ghost">
               Ekle
