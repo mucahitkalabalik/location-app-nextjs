@@ -2,6 +2,9 @@
 import dynamic from "next/dynamic";
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'; 
+import {  toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid'; 
+
 import {
   Box,
   Heading,
@@ -33,6 +36,7 @@ export default function Add() {
     }
 
     const newLocation = {
+      id: uuidv4(),
       name: locationName,
       position: clickedPosition,
       color: markerColor,
@@ -42,7 +46,11 @@ export default function Add() {
 
     const updatedLocations = [...locations, newLocation];
     localStorage.setItem('locations', JSON.stringify(updatedLocations));
-
+    toast("Konum başarıyla kaydedildi!", {
+      type: "success",
+      position: "bottom-right",
+      autoClose: 2000,
+    });
     setClickedPosition(null);
     setLocationName('');
     setMarkerColor('#ff0000');
@@ -50,7 +58,7 @@ export default function Add() {
 
   return (
     <Box maxW="600px" mx="auto" py={10} px={4}>
-      <Heading mb={6} size="lg">Konum Ekleme Sayfası</Heading>
+      <Heading mb={6} size="lg">Konum Ekle</Heading>
 
       <Box mb={6}>
         <MapComponent onClickMap={setClickedPosition} markerColor={markerColor} />

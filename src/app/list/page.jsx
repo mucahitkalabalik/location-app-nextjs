@@ -1,5 +1,8 @@
-'use client';
+"use client";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setLocations } from "../../store/locationsSlice";
 import {
   Box,
   Stack,
@@ -14,9 +17,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LocationList() {
+  const dispatch = useDispatch();
   const locations = useSelector((state) => state.locations);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedLocations = JSON.parse(localStorage.getItem("locations")) || [];
+    dispatch(setLocations(savedLocations));
+  }, [dispatch]);
 
   const toggleDetails = (index) => {
     setExpandedIndex((prev) => (prev === index ? null : index));
@@ -28,12 +37,19 @@ export default function LocationList() {
 
   return (
     <Stack spacing={6}>
-      <Button colorScheme="teal" width="fit-content" alignSelf="flex-start">
-        Rota Göster
-      </Button>
-
-      <Stack spacing={4}>
-        {locations.map((item, index) => (
+    <Stack spacing={4} direction="row" justifyContent="space-between" alignItems="center">
+      <Text fontSize="2xl" fontWeight="bold" textAlign="center" mx="auto"> 
+        Konum Listesi
+      </Text>
+    </Stack>
+  
+    <Stack spacing={2} w="100%" maxW="600px" mx="auto" px={4}>
+      {locations.length === 0 ? (
+        <Text textAlign="center" color="gray.500">
+          Henüz adres eklenmedi.
+        </Text>
+      ) : (
+        locations.map((item, index) => (
           <Box
             key={index}
             borderWidth="1px"
@@ -43,37 +59,37 @@ export default function LocationList() {
             _hover={{ shadow: "md" }}
           >
             <HStack alignItems="center" spacing={4}>
-          
+              <Text fontWeight="semibold">{item.name}</Text>
+  
               <FaMapMarkerAlt
                 color={item.color || "gray"}
                 size={20}
                 style={{ cursor: "pointer" }}
                 onClick={() => toggleDetails(index)}
               />
-
-              {/* Yer Adı */}
-              <Text fontWeight="semibold">{item.name}</Text>
-
+  
               {expandedIndex === index && (
                 <Text fontSize="sm" color="gray.600">
                   📍 {item.position.lat}, {item.position.lng}
                 </Text>
               )}
-
+  
               <Spacer />
-
-      
+  
               <IconButton
-                icon={<FaChevronRight />}
-                aria-label="Düzenle"
+                aria-label="Search database"
                 size="sm"
-                variant="ghost"
                 onClick={() => goToEdit(item.id)}
-              />
+              >
+                <FaChevronRight />
+              </IconButton>
             </HStack>
           </Box>
-        ))}
-      </Stack>
+        ))
+      )}
     </Stack>
+  </Stack>
+  
+  
   );
 }

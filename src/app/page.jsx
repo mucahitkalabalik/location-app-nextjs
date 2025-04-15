@@ -1,4 +1,5 @@
 // pages/index.js
+"use client";
 import { Box, Button, Heading } from "@chakra-ui/react";
 import Link from "next/link";
 
