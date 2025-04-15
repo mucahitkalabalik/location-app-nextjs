@@ -24,21 +24,28 @@ export default function MultiMarkerMap() {
   const [locations, setLocations] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [routeControl, setRouteControl] = useState(null);
+  const [isClient, setIsClient] = useState(false);  // Tarayıcıda olup olmadığını kontrol etmek için bir state
+
   const mapRef = useRef(null);  
 
   useEffect(() => {
+    // Tarayıcıda olup olmadığınızı kontrol ediyoruz
+    setIsClient(typeof window !== 'undefined');
+
+    // localStorage'dan veri alıyoruz
     const savedLocations = JSON.parse(localStorage.getItem('locations')) || [];
     setLocations(savedLocations);
   }, []);
 
   useEffect(() => {
-    if (navigator.geolocation) {
+    // Eğer tarayıcıda isek, kullanıcı konumunu alıyoruz
+    if (isClient && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lng: longitude });
       });
     }
-  }, []);
+  }, [isClient]);
 
   const handleMarkerClick = (loc) => {
     if (userLocation && mapRef.current) {
@@ -66,49 +73,48 @@ export default function MultiMarkerMap() {
   const defaultCenter = { lat: 39.9208, lng: 32.8541 };
   const center = locations.length > 0 ? locations[0].position : defaultCenter;
 
+  if (!isClient) {
+    // Eğer sunucuda çalışıyorsak, haritayı render etmiyoruz
+    return null;
+  }
+
   return (
-    <div>
-      {locations.length === 0 ? (
-        <p>Henüz konum eklenmemiştir.</p> // Konum eklenmemişse mesaj göster
-      ) : (
-        <MapContainer
-          center={center}
-          zoom={6}
-          style={{ height: '60vh', width: '100%' }}
-          whenReady={(e) => { 
-            mapRef.current = e.target; 
+    <MapContainer
+      center={center}
+      zoom={6}
+      style={{ height: '60vh', width: '100%' }}
+      whenReady={(e) => { 
+        mapRef.current = e.target; 
+      }}
+    >
+      <TileLayer
+        attribution='&copy; OpenStreetMap contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {locations.map((loc, index) => (
+        <Marker
+          key={index}
+          position={[loc.position.lat, loc.position.lng]}
+          icon={createMarkerIcon(loc.color)}
+          eventHandlers={{
+            click: () => handleMarkerClick(loc),
           }}
         >
-          <TileLayer
-            attribution='&copy; OpenStreetMap contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {locations.map((loc, index) => (
-            <Marker
-              key={index}
-              position={[loc.position.lat, loc.position.lng]}
-              icon={createMarkerIcon(loc.color)}
-              eventHandlers={{
-                click: () => handleMarkerClick(loc),
-              }}
-            >
-              <Popup>
-                {loc.name} <br />
-                Lat: {loc.position.lat}, Lng: {loc.position.lng}
-              </Popup>
-            </Marker>
-          ))}
+          <Popup>
+            {loc.name} <br />
+            Lat: {loc.position.lat}, Lng: {loc.position.lng}
+          </Popup>
+        </Marker>
+      ))}
 
-          {userLocation && (
-            <Marker
-              position={[userLocation.lat, userLocation.lng]}
-              icon={createMarkerIcon("blue")} 
-            >
-              <Popup>Your Location</Popup>
-            </Marker>
-          )}
-        </MapContainer>
+      {userLocation && (
+        <Marker
+          position={[userLocation.lat, userLocation.lng]}
+          icon={createMarkerIcon("blue")} 
+        >
+          <Popup>Your Location</Popup>
+        </Marker>
       )}
-    </div>
+    </MapContainer>
   );
 }
