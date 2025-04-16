@@ -24,6 +24,11 @@ export default function Navbar() {
               Liste
             </Button>
           </Link>
+          <Link as={NextLink} href="/locations" passHref>
+            <Button colorScheme="teal" variant="ghost">
+              Konumlar
+            </Button>
+          </Link>
         </Flex>
       </Flex>
     </Box>

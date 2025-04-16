@@ -1,34 +1,20 @@
-'use client';
+"use client";
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { useEffect, useState, useRef } from 'react';
-import L from 'leaflet';
-import 'leaflet-routing-machine'; 
-
-const createMarkerIcon = (color) => {
-  const svgIcon = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="41" viewBox="0 0 30 41">
-      <circle cx="15" cy="15" r="6" fill="${color}" />
-    </svg>
-  `;
-  const iconUrl = 'data:image/svg+xml;base64,' + btoa(svgIcon); 
-  return new L.Icon({
-    iconUrl,
-    iconSize: [30, 41], 
-    iconAnchor: [7.5, 20.5], 
-    popupAnchor: [0, -34],
-  });
-};
-
+import { MapContainer, Marker, Popup } from "react-leaflet";
+import { useEffect, useState, useRef } from "react";
+import { createMarkerIcon, defaultCenter } from "@/utils/mapUtils";
+import L from "leaflet";
+import "leaflet-routing-machine";
+import { Markers } from "./MapComponents/Markers";
+import { MapTilePlayer } from "./MapComponents/MapTilePlayer";
 export default function MultiMarkerMap() {
   const [locations, setLocations] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [routeControl, setRouteControl] = useState(null);
-  const mapRef = useRef(null);  
+  const mapRef = useRef(null);
 
   useEffect(() => {
-
-    const savedLocations = JSON.parse(localStorage.getItem('locations')) || [];
+    const savedLocations = JSON.parse(localStorage.getItem("locations")) || [];
     setLocations(savedLocations);
   }, []);
 
@@ -49,56 +35,43 @@ export default function MultiMarkerMap() {
 
       const newRouteControl = L.Routing.control({
         waypoints: [
-          L.latLng(userLocation.lat, userLocation.lng), 
-          L.latLng(loc.position.lat, loc.position.lng), 
+          L.latLng(userLocation.lat, userLocation.lng),
+          L.latLng(loc.position.lat, loc.position.lng),
         ],
         routeWhileDragging: true,
-        createMarker: function() { return null; }, 
-      }).addTo(mapRef.current); 
+        createMarker: function () {
+          return null;
+        },
+      }).addTo(mapRef.current);
 
-      setRouteControl(newRouteControl); 
-
+      setRouteControl(newRouteControl);
     } else {
       console.error("Harita referansı alınamadı.");
     }
   };
 
-  const defaultCenter = { lat: 39.9208, lng: 32.8541 };
   const center = locations.length > 0 ? locations[0].position : defaultCenter;
 
   return (
     <MapContainer
       center={center}
       zoom={6}
-      style={{ height: '70vh', width: '100%' }}
-      whenReady={(e) => { 
-        mapRef.current = e.target; 
+      style={{ height: "70vh", width: "100%" }}
+      whenReady={(e) => {
+        mapRef.current = e.target;
       }}
     >
-      <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      <MapTilePlayer />
+      <Markers
+        locations={locations}
+        handleMarkerClick={handleMarkerClick}
+        createMarkerIcon={createMarkerIcon}
       />
-      {locations.map((loc, index) => (
-        <Marker
-          key={index}
-          position={[loc.position.lat, loc.position.lng]}
-          icon={createMarkerIcon(loc.color)}
-          eventHandlers={{
-            click: () => handleMarkerClick(loc),
-          }}
-        >
-          <Popup>
-            {loc.name} <br />
-            Lat: {loc.position.lat}, Lng: {loc.position.lng}
-          </Popup>
-        </Marker>
-      ))}
 
       {userLocation && (
         <Marker
           position={[userLocation.lat, userLocation.lng]}
-          icon={createMarkerIcon("blue")} 
+          icon={createMarkerIcon("blue")}
         >
           <Popup>Your Location</Popup>
         </Marker>

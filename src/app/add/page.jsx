@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { Box, Heading, Input, Button, VStack, Text } from "@chakra-ui/react";
 import { addLocation, setLocations } from "../../store/locationsSlice";
+import { getAllLocations } from "../../services/locationService"; 
 
 const MapComponent = dynamic(() => import("../../components/MapComponent"), {
   ssr: false,
@@ -22,7 +23,7 @@ export default function Add() {
   const [markerColor, setMarkerColor] = useState("#ff0000");
 
   useEffect(() => {
-    const savedLocations = JSON.parse(localStorage.getItem("locations")) || [];
+    const savedLocations = getAllLocations();
     dispatch(setLocations(savedLocations));
   }, [dispatch]);
 
