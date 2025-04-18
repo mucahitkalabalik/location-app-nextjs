@@ -1,5 +1,7 @@
 # 🗺️ Konum Yönetim ve Rota Oluşturma Uygulaması
 
+🔗 [Canlı Demo](https://location-next-app.netlify.app/)
+
 Bu proje, kullanıcıların harita üzerinden konum seçip kaydedebileceği, bu konumları düzenleyip listeleyebileceği ve konumlar arasında rota oluşturabileceği bir web uygulamasıdır. Uygulama **Next.js**, **Chakra UI**, **OpenStreetMap (OSM)** ve **Redux** kullanılarak geliştirilmiştir. 
 
 ## 🚀 Özellikler
