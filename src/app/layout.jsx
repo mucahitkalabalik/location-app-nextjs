@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import {store} from "@/store";
 import Navbar from "@/components/NavBar";
 import { ToastContainer } from 'react-toastify';
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 export default function RootLayout(props = ({ children } = {})) {
   const { children } = props;
