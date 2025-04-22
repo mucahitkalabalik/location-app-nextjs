@@ -11,7 +11,7 @@ export default function MultiMarkerMap() {
   const [locations, setLocations] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [routeInfo, setRouteInfo] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
   const mapRef = useRef(null);
   const routingRef = useRef(null);
 
@@ -35,13 +35,12 @@ export default function MultiMarkerMap() {
       return;
     }
   
-    // Önceki rotayı temizle
     if (routingRef.current) {
       routingRef.current.remove();
       routingRef.current = null;
     }
   
-    setLoading(true); // Start loading
+    setLoading(true); 
   
     const control = L.Routing.control({
       waypoints: [
@@ -73,13 +72,13 @@ export default function MultiMarkerMap() {
         duration: durationMin,
       });
   
-      setLoading(false); // Stop loading
+      setLoading(false); 
     });
   
     control.on("routingerror", function (err) {
       alert("Rota çizilemedi.");
       setRouteInfo(null);
-      setLoading(false); // Stop loading
+      setLoading(false); 
     });
   };
 
