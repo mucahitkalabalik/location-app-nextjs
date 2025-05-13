@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 "use client";
+=======
+>>>>>>> ee5c6617577502e9d6057f6e8e362b53a4ce16de
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
