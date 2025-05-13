@@ -22,6 +22,7 @@ export default function Home() {
   }, [loadLocations]);
 
   return (
+<<<<<<< HEAD
     <Box maxW="1200px" mx="auto" py={6} px={4}>
       <Card 
         bg="white" 
@@ -68,5 +69,15 @@ export default function Home() {
         </CardBody>
       </Card>
     </Box>
+=======
+    <>
+    <Box p={4}>
+      <Heading size="lg" mb={4}>
+        Konumlarınız
+      </Heading>
+      <MultiMapComponent />
+    </Box>
+    </>
+>>>>>>> afe52571f3f6ef6cd3424411cd8517c3c42e43e9
   );
 }
