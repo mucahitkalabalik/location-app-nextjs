@@ -1,110 +1,130 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { 
+  Box, 
+  Heading, 
+  Input, 
+  Button, 
+  VStack, 
+  Text, 
+  FormControl, 
+  FormLabel,
+  FormHelperText,
+  Card,
+  CardBody
+} from "@chakra-ui/react";
+import { useLocations } from "@/hooks/useLocations";
 
-import { Box, Heading, Input, Button, VStack, Text } from "@chakra-ui/react";
-import { addLocation, setLocations } from "../../store/locationsSlice";
-import { getAllLocations } from "../../services/locationService"; 
-
-const MapComponent = dynamic(() => import("../../components/MapComponent"), {
+// Dynamically import the MapComponent with SSR disabled
+const MapComponent = dynamic(() => import("@/components/MapComponent"), {
   ssr: false,
 });
 
+/**
+ * Add new location page
+ */
 export default function Add() {
-  const dispatch = useDispatch();
   const router = useRouter();
-  const locations = useSelector((state) => state.locations);
+  const { createLocation } = useLocations();
   const [clickedPosition, setClickedPosition] = useState(null);
   const [locationName, setLocationName] = useState("");
   const [markerColor, setMarkerColor] = useState("#ff0000");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const savedLocations = getAllLocations();
-    dispatch(setLocations(savedLocations));
-  }, [dispatch]);
-
-  const handleSave = () => {
-    if (!clickedPosition || !locationName) {
-      alert("Lütfen konum seçin ve bir isim girin!");
+  /**
+   * Handle save button click
+   */
+  const handleSave = async () => {
+    if (!clickedPosition || !locationName.trim()) {
       return;
     }
 
-    const newLocation = {
-      id: uuidv4(),
-      name: locationName,
-      position: clickedPosition,
-      color: markerColor,
-    };
+    setIsSubmitting(true);
 
-    dispatch(addLocation(newLocation));
+    try {
+      const success = await createLocation({
+        name: locationName.trim(),
+        position: clickedPosition,
+        color: markerColor,
+      });
 
-    const updatedLocations = [...locations, newLocation];
-    localStorage.setItem("locations", JSON.stringify(updatedLocations));
-    toast("Konum başarıyla kaydedildi!", {
-      type: "success",
-      position: "bottom-right",
-      autoClose: 2000,
-    });
-    setClickedPosition(null);
-    setLocationName("");
-    setMarkerColor("#ff0000");
-    router.push("/");
+      if (success) {
+        router.push("/");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box maxW="600px" mx="auto" py={10} px={4}>
-      <Heading mb={6} size="lg">
-        Konum Ekle
-      </Heading>
+    <Box maxW="600px" mx="auto" py={6} px={4}>
+      <Card 
+        bg="white" 
+        shadow="md" 
+        borderRadius="lg" 
+        borderWidth="1px" 
+        borderColor="gray.200"
+      >
+        <CardBody>
+          <Heading mb={6} size="lg">
+            Konum Ekle
+          </Heading>
 
-      <Box mb={6}>
-        <MapComponent
-          onClickMap={setClickedPosition}
-          markerColor={markerColor}
-        />
-      </Box>
+          <Box mb={6} borderRadius="md" overflow="hidden">
+            <MapComponent
+              onClickMap={setClickedPosition}
+              location={clickedPosition}
+              markerColor={markerColor}
+            />
+          </Box>
 
-      {clickedPosition && (
-        <Box mb={4}>
-          <Text fontWeight="bold">Seçilen Koordinat:</Text>
-          <Text>Enlem: {clickedPosition.lat}</Text>
-          <Text>Boylam: {clickedPosition.lng}</Text>
-        </Box>
-      )}
+          {clickedPosition && (
+            <Box mb={4} p={3} borderRadius="md" bg="gray.50">
+              <Text fontWeight="bold">Seçilen Koordinat:</Text>
+              <Text>Enlem: {clickedPosition.lat.toFixed(6)}</Text>
+              <Text>Boylam: {clickedPosition.lng.toFixed(6)}</Text>
+            </Box>
+          )}
 
-      <VStack spacing={4} align="stretch">
-        <Box>
-        <Text>Adresi isimlendirin:</Text>
-          <Input
-            placeholder="Örn: Ev, İş, Park"
-            value={locationName}
-            onChange={(e) => setLocationName(e.target.value)}
-          />
-        </Box>
+          <VStack spacing={4} align="stretch">
+            <FormControl isRequired>
+              <FormLabel>Konum İsmi</FormLabel>
+              <Input
+                placeholder="Örn: Ev, İş, Park"
+                value={locationName}
+                onChange={(e) => setLocationName(e.target.value)}
+              />
+              <FormHelperText>Konum için hatırlatıcı bir isim girin</FormHelperText>
+            </FormControl>
 
-        <Box>
+            <FormControl>
+              <FormLabel>İşaretçi Rengi</FormLabel>
+              <Input
+                type="color"
+                value={markerColor}
+                onChange={(e) => setMarkerColor(e.target.value)}
+                w="100px"
+                h="50px"
+                p={1}
+                border="none"
+                cursor="pointer"
+              />
+            </FormControl>
 
-        <Text>Renk Seçin:</Text>
-          <Input
-            type="color"
-            value={markerColor}
-            onChange={(e) => setMarkerColor(e.target.value)}
-            w="100px"
-            h="50px"
-            p={0}
-            border="none"
-            cursor="pointer"
-          />
-        </Box>
-
-        <Button colorScheme="teal" onClick={handleSave}>
-          Konumu Kaydet
-        </Button>
-      </VStack>
+            <Button 
+              colorScheme="teal" 
+              onClick={handleSave} 
+              isDisabled={!clickedPosition || !locationName.trim() || isSubmitting}
+              isLoading={isSubmitting}
+              mt={2}
+            >
+              Konumu Kaydet
+            </Button>
+          </VStack>
+        </CardBody>
+      </Card>
     </Box>
   );
 }
