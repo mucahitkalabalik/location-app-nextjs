@@ -21,9 +21,7 @@ import {
   deleteLocationData
 } from '@/services/locationService';
 
-/**
- * Custom hook for managing locations
- */
+
 export function useLocations() {
   const dispatch = useDispatch();
   const locations = useSelector((state) => state.locations.items);
@@ -35,7 +33,6 @@ export function useLocations() {
     return savedLocations;
   }, [dispatch]);
 
-  // Add a new location
   const createLocation = useCallback((locationData) => {
     try {
       if (!locationData.position || !locationData.name) {
@@ -66,7 +63,6 @@ export function useLocations() {
     }
   }, [dispatch]);
 
-  // Update an existing location
   const editLocation = useCallback((id, changes) => {
     try {
       if (!id) {
@@ -91,7 +87,6 @@ export function useLocations() {
     }
   }, [dispatch]);
 
-  // Delete a location
   const deleteLocation = useCallback((id) => {
     try {
       if (!id) {
@@ -116,7 +111,6 @@ export function useLocations() {
     }
   }, [dispatch]);
 
-  // Get a location by ID
   const getLocation = useCallback((id) => {
     return getLocationById(id);
   }, []);
