@@ -21,7 +21,6 @@ import {
   deleteLocationData
 } from '@/services/locationService';
 
-
 export function useLocations() {
   const dispatch = useDispatch();
   const locations = useSelector((state) => state.locations.items);
